@@ -72,6 +72,9 @@
         <link_name>${namespace}/base_link</link_name>
       </plugin>
     </gazebo> -->
+    <gazebo>
+        <plugin name="auv_plugin" filename="libAUVPlugin.so" />
+    </gazebo>
 
     <xacro:include filename="$(find anahita_description)/urdf/anahita_actuators.xacro"/>
     <xacro:include filename="$(find anahita_description)/urdf/anahita_sensors.xacro"/>
