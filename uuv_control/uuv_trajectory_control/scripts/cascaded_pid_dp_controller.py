@@ -18,6 +18,7 @@ class ROV_CascadedController(DPControllerBase):
 
     def __init__(self):
         self._last_t = None
+        self.cmd_pose_pub = rospy.Publisher('/anahita/cmd_pose', Pose, queue_size=10)
         DPControllerBase.__init__(self, is_model_based=False, planner_full_dof=False)
         self._logger.info('Initializing: ' + self._LABEL)
 
@@ -28,7 +29,6 @@ class ROV_CascadedController(DPControllerBase):
         self.odom_vel_ang = np.array(3)
         self.odom_vel_lin = np.array(3)
 
-        self._is_init = True
         self._logger.info(self._LABEL + ' ready')
 
         self._mass = rospy.get_param("pid/mass")
@@ -74,11 +74,10 @@ class ROV_CascadedController(DPControllerBase):
                                             self._position_pid['rot_d'], \
                                             self._position_pid['rot_sat'])
 
-        self.sub_odometry = rospy.Subscriber('/anahita/pose_gt', numpy_msg(Odometry), self.o_callback)
-        self.cmd_pose_pub = rospy.Publisher('/anahita/cmd_pose', Pose, queue_size=10)
+        # self.sub_odometry = rospy.Subscriber('/anahita/pose_gt', numpy_msg(Odometry), self.o_callback)
 
         self._logger.info('Cascaded PID controller ready!')
-
+        self._is_init = True
 
     def _reset_controller(self):
         super(ROV_CascadedController, self).reset_controller()
@@ -88,66 +87,66 @@ class ROV_CascadedController(DPControllerBase):
         if not self._is_init:
             return False
 
-        t = rospy.get_time()
-        if self._last_t is None:
-            self._last_t = t
-            self._last_vel = self._vehicle_model._vel
-            return False
+        # t = rospy.get_time()
+        # if self._last_t is None:
+        #     self._last_t = t
+        #     self._last_vel = self._vehicle_model._vel
+        #     return False
 
-        dt = t - self._last_t
-        if dt <= 0:
-            self._last_t = t
-            self._last_vel = self._vehicle_model._vel 
-            return False
+        # dt = t - self._last_t
+        # if dt <= 0:
+        #     self._last_t = t
+        #     self._last_vel = self._vehicle_model._vel 
+        #     return False
 
-        vel = np.zeros(6)
-        vel = self._vehicle_model._vel
+        # vel = np.zeros(6)
+        # vel = self._vehicle_model._vel
 
-        acc = np.zeros(6)
-        acc = (vel - self._last_vel) / dt
+        # acc = np.zeros(6)
+        # acc = (vel - self._last_vel) / dt
 
-        p = self._vehicle_model._pose['pos']
-        q = self._vehicle_model._pose['rot']
+        # p = self._vehicle_model._pose['pos']
+        # q = self._vehicle_model._pose['rot']
 
-        # Compute control output:
-        t = rospy.get_rostime().to_sec()
+        # # Compute control output:
+        # t = rospy.get_rostime().to_sec()
 
-        # Position error
-        e_pos_world = self._reference['pos'] - p
+        # # Position error
+        # e_pos_world = self._reference['pos'] - p
 
-        e_pos_body = trans.quaternion_matrix(q).transpose()[0:3,0:3].dot(e_pos_world)
+        # e_pos_body = trans.quaternion_matrix(q).transpose()[0:3,0:3].dot(e_pos_world)
 
-        # Error quaternion wrt body frame
-        e_rot_quat = trans.quaternion_multiply(trans.quaternion_conjugate(q), self._reference['rot'])
+        # # Error quaternion wrt body frame
+        # e_rot_quat = trans.quaternion_multiply(trans.quaternion_conjugate(q), self._reference['rot'])
 
-        if np.linalg.norm(e_pos_world[0:2]) > 5.0:
-            # special case if we are far away from goal:
-            # ignore desired heading, look towards goal position
-            heading = math.atan2(e_pos_world[1],e_pos_world[0])
-            quat_des = np.array([0, 0, math.sin(0.5*heading), math.cos(0.5*heading)])
-            e_rot_quat = trans.quaternion_multiply(trans.quaternion_conjugate(q), quat_des)
+        # if np.linalg.norm(e_pos_world[0:2]) > 5.0:
+        #     # special case if we are far away from goal:
+        #     # ignore desired heading, look towards goal position
+        #     heading = math.atan2(e_pos_world[1],e_pos_world[0])
+        #     quat_des = np.array([0, 0, math.sin(0.5*heading), math.cos(0.5*heading)])
+        #     e_rot_quat = trans.quaternion_multiply(trans.quaternion_conjugate(q), quat_des)
 
-        # Error angles
-        e_rot = np.array(trans.euler_from_quaternion(e_rot_quat))
+        # # Error angles
+        # e_rot = np.array(trans.euler_from_quaternion(e_rot_quat))
 
-        v_linear = self._lin_pos_pid_reg.regulate(e_pos_body, t)
-        v_angular = self._ang_pos_pid_reg.regulate(e_rot, t)
+        # v_linear = self._lin_pos_pid_reg.regulate(e_pos_body, t)
+        # v_angular = self._ang_pos_pid_reg.regulate(e_rot, t)
 
-        e_linear_vel = v_linear - np.array([vel[0], vel[1], vel[2]])
-        e_angular_vel = v_angular - np.array([vel[3], vel[4], vel[5]])
+        # e_linear_vel = v_linear - np.array([vel[0], vel[1], vel[2]])
+        # e_angular_vel = v_angular - np.array([vel[3], vel[4], vel[5]])
 
-        a_linear = self._lin_vel_pid_reg.regulate(e_linear_vel, t)
-        a_angular = self._ang_vel_pid_reg.regulate(e_angular_vel, t)
+        # a_linear = self._lin_vel_pid_reg.regulate(e_linear_vel, t)
+        # a_angular = self._ang_vel_pid_reg.regulate(e_angular_vel, t)
 
-        accel = np.hstack((a_linear, a_angular)).transpose()
+        # accel = np.hstack((a_linear, a_angular)).transpose()
 
-        # print "reference"
-        # print self._reference
+        # # print "reference"
+        # # print self._reference
 
-        if self._use_cascaded_pid:
-            self._force_torque = self._mass_inertial_matrix.dot(accel)
-        else:
-            self._force_torque = self._vehicle_model.compute_force(acc, vel)
+        # if self._use_cascaded_pid:
+        #     self._force_torque = self._mass_inertial_matrix.dot(accel)
+        # else:
+        #     self._force_torque = self._vehicle_model.compute_force(acc, vel)
 
         cmd_pose = Pose()
         cmd_pose.position.x = self._reference['pos'][0]
@@ -162,31 +161,31 @@ class ROV_CascadedController(DPControllerBase):
         return True
                     
         # Publish control forces and torques
-        self.publish_control_wrench(self._force_torque)
-        self._last_t = t
-        self._last_vel = self._vehicle_model._vel
+        # self.publish_control_wrench(self._force_torque)
+        # self._last_t = t
+        # self._last_vel = self._vehicle_model._vel
 
-        return True
+        # return True
 
-    def saturate (self):
+    # def saturate (self):
 
-        for i in range(0, 6):
-            if (self._force_torque[i] > 1500):
-                self._force_torque[i] = 1500
+    #     for i in range(0, 6):
+    #         if (self._force_torque[i] > 1500):
+    #             self._force_torque[i] = 1500
 
-            if (self._force_torque[i] < -1500):
-                self._force_torque[i] = -1500
+    #         if (self._force_torque[i] < -1500):
+    #             self._force_torque[i] = -1500
 
-    def o_callback (self, msg):
+    # def o_callback (self, msg):
 
-        p = msg.pose.pose.position
-        q = msg.pose.pose.orientation
-        u = msg.twist.twist.linear
-        w = msg.twist.twist.angular
-        self.odom_pos = np.array([p.x, p.y, p.z])
-        self.odom_quat = np.array([q.x, q.y, q.z, q.w])
-        self.odom_vel_lin = np.array([u.x, u.y, u.z])
-        self.odom_vel_ang = np.array([w.x, u.y, u.z])
+    #     p = msg.pose.pose.position
+    #     q = msg.pose.pose.orientation
+    #     u = msg.twist.twist.linear
+    #     w = msg.twist.twist.angular
+    #     self.odom_pos = np.array([p.x, p.y, p.z])
+    #     self.odom_quat = np.array([q.x, q.y, q.z, q.w])
+    #     self.odom_vel_lin = np.array([u.x, u.y, u.z])
+    #     self.odom_vel_ang = np.array([w.x, u.y, u.z])
 
 if __name__ == '__main__':
     print('Starting Cascaded PID Controller')

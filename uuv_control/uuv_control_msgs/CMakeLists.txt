@@ -39,6 +39,10 @@ add_message_files(
    ResetController.srv
    TrajectoryComplete.srv
    PoseReach.srv
+   CancelRequest.srv
+   BottomSearch.srv
+   FrontSearch.srv
+   StallVehicle.srv
  )
 
 generate_messages(

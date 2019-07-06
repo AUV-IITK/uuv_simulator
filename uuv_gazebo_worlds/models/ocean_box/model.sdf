@@ -20,10 +20,10 @@
     <link name="link">
       <visual name="ground">
         <cast_shadows>false</cast_shadows>
-        <pose>0 0 -3 0 0 0</pose>
+        <pose>0 0 -11.6 0 0 0</pose>
         <geometry>
           <box>
-            <size>50 25 .1</size>
+            <size>91 61 .1</size>
           </box>
         </geometry>
         <material>
@@ -35,10 +35,10 @@
       </visual>
 
       <collision name="ground">
-        <pose>0 0 -3 0 0 0</pose>
+        <pose>0 0 -11.6 0 0 0</pose>
         <geometry>
           <box>
-            <size>50 25 .1</size>
+            <size>91 61 .1</size>
           </box>
         </geometry>
       </collision>
@@ -48,7 +48,7 @@
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <box>
-            <size>50 25 .1</size>
+            <size>91 61 .1</size>
           </box>
         </geometry>
         <material>
@@ -61,10 +61,10 @@
 
       <visual name="north">
         <cast_shadows>false</cast_shadows>
-        <pose>25 0 -1.5 0 0 0</pose>
+        <pose>45.5 0 -5.8 0 0 0</pose>
         <geometry>
           <box>
-            <size>.1 25 3</size>
+            <size>.1 61 11.8</size>
           </box>
         </geometry>
         <material>
@@ -77,10 +77,10 @@
 
       <visual name="south">
         <cast_shadows>false</cast_shadows>
-        <pose>-25 0 -1.5 0 0 0</pose>
+        <pose>-45.5 0 -5.8 0 0 0</pose>
         <geometry>
           <box>
-            <size>.1 25 3</size>
+            <size>.1 61 11.8</size>
           </box>
         </geometry>
         <material>
@@ -93,10 +93,10 @@
 
       <visual name="east">
         <cast_shadows>false</cast_shadows>
-        <pose>0 -12.5 -1.5 0 0 0</pose>
+        <pose>0 -30.5 -5.8 0 0 0</pose>
         <geometry>
           <box>
-            <size>50 .1 3</size>
+            <size>91 .1 11.8</size>
           </box>
         </geometry>
         <material>
@@ -109,10 +109,10 @@
 
       <visual name="west">
         <cast_shadows>false</cast_shadows>
-        <pose>0 12.5 -1.5 0 0 0</pose>
+        <pose>0 30.5 -5.8 0 0 0</pose>
         <geometry>
           <box>
-            <size>50 .1 3</size>
+            <size>91 .1 11.8</size>
           </box>
         </geometry>
         <material>

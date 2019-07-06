@@ -51,19 +51,20 @@
             <longitude_deg>3.515625</longitude_deg>
         </spherical_coordinates>
 
-        <!-- Global light source -->
-        <light name='sun' type='directional'>
-            <cast_shadows>1</cast_shadows>
-            <pose frame=''>0 0 10 0 0 0</pose>
-            <diffuse>0.8 0.8 0.8 1</diffuse>
+        <light type="directional" name="sun_diffuse_1">
+            <pose>-200 -200 100 0 0 0</pose>
+            <diffuse>0.6 0.6 0.6 1</diffuse>
+            <specular>0 0 0 1</specular>
+            <direction>-0.3 -0.3 -1</direction>
+            <cast_shadows>true</cast_shadows>
+        </light>
+
+        <light type="directional" name="sun_diffuse_2">
+            <pose>-150 -130 50 0 0 0</pose>
+            <diffuse>0.6 0.6 0.6 1</diffuse>
             <specular>0.2 0.2 0.2 1</specular>
-            <attenuation>
-                <range>1000</range>
-                <constant>0.9</constant>
-                <linear>0.01</linear>
-                <quadratic>0.001</quadratic>
-            </attenuation>
-            <direction>0.5 0.1 -0.9</direction>
+            <direction>0.5 0.5 -1</direction>
+            <cast_shadows>true</cast_shadows>
         </light>
 
         <!-- Bounding box with sea surface -->
@@ -72,14 +73,72 @@
             <pose>0 0 0 0 0 0</pose>
         </include>
 
-        <!-- <include>
-            <uri>model://vampire_stake</uri>
-            <pose>3 0 -1.400003 0 0 -1.575866</pose>
-        </include> -->
+        <include>
+            <name>path_marker1</name>
+            <uri>model://PathMarker</uri>
+            <pose>15.925 -22.31 -11 0 0 -3.130577</pose>
+            <static>true</static>
+        </include>
 
         <include>
-            <uri>model://pinger</uri>
-            <pose>21.096525 8.886061 -2.450000 0 0 0</pose>
+            <name>path_marker2</name>
+            <uri>model://PathMarker</uri>
+            <pose>29.575 -16.85 -11 0 0 0.301373</pose>
+            <static>true</static>
+        </include>
+
+        <include>
+            <uri>model://Gate_URDF_NEW</uri>
+            <pose>12.74 -23.675 -4 0.050444 0.498656 1.645641</pose>
+            <static>true</static>
+        </include>
+
+        <include>
+            <uri>model://vampire_stake</uri>
+            <pose>22.748215 4.550674 -10 0 0 0</pose>
+        </include>
+
+        <include>
+            <uri>model://jiangshi</uri>
+            <pose>28.209999 -20.945000 -4 1.582527 0.022114 -1.083062</pose>
+            <static>true</static>
+        </include>
+
+        <include>
+            <uri>model://crucifix_platform</uri>
+            <pose>17.839634 23.592878 -10.263471 0 0 -3.14</pose>
+            <static>true</static>
+        </include>
+
+        <include>
+            <uri>model://crucifix</uri>
+            <pose>17.838968 23.593578 -10.258084 0 0 -3.14</pose>
+            <static>true</static>
+        </include>
+
+        <include>
+            <uri>model://niot_bins</uri>
+            <pose>36.4 -7.75 -10 1.550940 0 0.379360</pose>
+            <static>true</static>
+        </include>
+
+        <include>
+            <name>pinger1</name>
+            <uri>model://pole_pinger</uri>
+            <pose>21.356283 5.339616 -11.44 0 0 0</pose>
+            <static>true</static>
+        </include>
+
+        <include>
+            <name>pinger2</name>
+            <uri>model://pole_pinger</uri>
+            <pose>18.313801 24.509823 -11.466645 0 0 0</pose>
+            <static>true</static>
+        </include>
+
+        <include>
+            <uri>model://Buoy_Akash</uri>
+            <pose>27.656416 -21.449871 -4.360870 -3.110457 -0.011932 0.806675</pose>
             <static>true</static>
         </include>
 

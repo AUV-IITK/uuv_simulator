@@ -19,23 +19,29 @@
     <static>true</static>
     <link name="seabed">
       <collision name="seabed">
-        <pose>0 0 -60 0 0 0</pose>
+        <pose>0 0 -11.8 0 0 1.57</pose>
         <geometry>
-          <mesh>
+          <!-- <mesh>
             <uri>model://herkules_seabed/meshes/herkules_seabed.dae</uri>
-            <scale>4.0 4.0 1.0</scale>
-          </mesh>
+            <scale>0.61 0.91 1.0</scale>
+          </mesh> -->
+        <box>
+            <size>91 61 .1</size>
+        </box>
         </geometry>
       </collision>
 
       <visual name="seabed">
         <cast_shadows>true</cast_shadows>
-        <pose>0 0 -60 0 0 0</pose>
+        <pose>0 0 -11.8 0 0 1.57</pose>
         <geometry>
-          <mesh>
+          <!-- <mesh>
             <uri>model://herkules_seabed/meshes/herkules_seabed.dae</uri>
-            <scale>4.0 4.0 1.0</scale>
-          </mesh>
+            <scale>0.61 0.91 1.0</scale>
+          </mesh> -->
+            <box>
+                <size>91 61 .1</size>
+            </box>
         </geometry>
         <material>
           <script>
@@ -48,11 +54,11 @@
 
     <link name="ocean_link">
       <visual name="surface">
-        <pose>0 0 0 0 0 0</pose>        
+        <pose>0 0 0 0 0 1.57</pose>        
         <cast_shadows>false</cast_shadows>
         <geometry>
           <box>                        
-            <size>400 400 0.1</size>
+            <size>91 61 0.1</size>
           </box>
         </geometry>                
         <material>
@@ -64,10 +70,10 @@
       </visual>
 
       <visual name="bottom">
-        <pose>0 0 -70.0 0 0 0</pose>        
+        <pose>0 0 -12.0 0 0 0</pose>        
         <geometry>
           <box>                        
-            <size>400 400 0.1</size>
+            <size>61 91 0.1</size>
           </box>
         </geometry>                
         <material>
@@ -79,10 +85,10 @@
       </visual>
 
       <visual name="north_wall">
-        <pose>0 200 -35.0 0 0 0</pose>        
+        <pose>0 45.5 -6 0 0 0</pose>        
         <geometry>
           <box>                        
-            <size>400 0.1 70</size>
+            <size>61 0.1 12</size>
           </box>
         </geometry>                
         <material>
@@ -94,10 +100,10 @@
       </visual>
 
       <visual name="south_wall">
-        <pose>0 -200 -35.0 0 0 0</pose>        
+        <pose>0 -45.5 -6 0 0 0</pose>        
         <geometry>
           <box>                        
-            <size>400 0.1 70</size>
+            <size>61 0.1 12</size>
           </box>
         </geometry>                
         <material>
@@ -109,10 +115,10 @@
       </visual>
 
       <visual name="east_wall">
-        <pose>200 0 -35.0 0 0 0</pose>        
+        <pose>30.5 0 -6 0 0 0</pose>        
         <geometry>
           <box>                        
-            <size>0.1 400 70</size>
+            <size>0.1 91 12</size>
           </box>
         </geometry>                
         <material>
@@ -124,10 +130,10 @@
       </visual>
 
       <visual name="west_wall">
-        <pose>-200 0 -35.0 0 0 0</pose>        
+        <pose>-30.5 0 -6 0 0 0</pose>        
         <geometry>
           <box>                        
-            <size>0.1 400 70</size>
+            <size>0.1 91 12</size>
           </box>
         </geometry>                
         <material>

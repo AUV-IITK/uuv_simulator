@@ -206,6 +206,8 @@ class DPControllerLocalPlanner(object):
         self._smooth_approach_on = False
         # Time stamp for received trajectory
         self._stamp_trajectory_received = 0.0
+        self._station_keeping_ref = None
+        self._stall_vehicle_on = False
         # Dictionary of services
         self._services = dict()
         self._services['hold_vehicle'] = rospy.Service(
@@ -230,6 +232,8 @@ class DPControllerLocalPlanner(object):
             'trajectory_complete', TrajectoryComplete, self.is_trajectory_complete)
         self._services['pose_reach'] = rospy.Service('pose_reach',
             PoseReach, self._is_pose_reached)
+        self._services['stall_vehicle'] = rospy.Service('stall_vehicle',
+            StallVehicle, self._stall_vehicle)
 
     def __del__(self):
         """Remove logging message handlers"""
@@ -438,6 +442,21 @@ class DPControllerLocalPlanner(object):
     def is_station_keeping_on(self):
         return self._station_keeping_on
 
+    def set_stall_vehicle (self, is_on=True):
+        self._stall_vehicle_on = is_on
+        self._logger.info('VEHICLE STALL MODE = ' + ('ON' if is_on else 'OFF'))
+
+    def _stall_vehicle(self, request):
+        if (request.status):
+            self.set_station_keeping(False)
+            self.set_automatic_mode(False)
+            self.set_trajectory_running(False)
+            self.set_stall_vehicle(True)
+        else:
+            self.set_stall_vehicle(False)
+
+        return StallVehicleResponse(True)
+
     def is_automatic_on(self):
         return self._is_automatic
 
@@ -502,10 +521,12 @@ class DPControllerLocalPlanner(object):
     def start_station_keeping(self):
         if self._vehicle_pose is not None:
             self._this_ref_pnt = deepcopy(self._vehicle_pose)
+            self._station_keeping_ref = deepcopy(self._vehicle_pose)
             self._this_ref_pnt.vel = np.zeros(6)
             self._this_ref_pnt.acc = np.zeros(6)
             self.set_station_keeping(True)
             self.set_automatic_mode(False)
+            self.set_stall_vehicle(False)
             self._smooth_approach_on = False
 
     def hold_vehicle(self, request):
@@ -518,6 +539,15 @@ class DPControllerLocalPlanner(object):
         self.start_station_keeping()
         return HoldResponse(True)
 
+    def cancel_request (self, request):
+        pass
+
+    def bottom_manoeuvre (self, request):
+        pass
+
+    def front_manoeuvre (self, request):
+        pass
+
     def go_to_pose(self, request):
         """
         Service callback function to achieve a certain pose
@@ -525,6 +555,7 @@ class DPControllerLocalPlanner(object):
         self.set_automatic_mode(False)
         self.set_trajectory_running(False)
         self.set_station_keeping(False)
+        self.set_stall_vehicle(False)
 
         print 'Got a pose target for the Anahita'
         print request.target_pose
@@ -659,6 +690,7 @@ class DPControllerLocalPlanner(object):
             self._traj_interpolator.set_start_time((t.to_sec() if not request.start_now else rospy.get_time()))
             self._update_trajectory_info()
             self.set_station_keeping(False)
+            self.set_stall_vehicle(False)
             self.set_automatic_mode(True)
             self.set_trajectory_running(True)
             self._idle_circle_center = None
@@ -728,6 +760,7 @@ class DPControllerLocalPlanner(object):
             self._update_trajectory_info()
             # Disables station keeping to start trajectory
             self.set_station_keeping(False)
+            self.set_stall_vehicle(False)
             self.set_automatic_mode(True)
             self.set_trajectory_running(True)
             self._idle_circle_center = None
@@ -813,6 +846,7 @@ class DPControllerLocalPlanner(object):
                     self._logger.error('Setting maximum duration failed')
             self._update_trajectory_info()
             self.set_station_keeping(False)
+            self.set_stall_vehicle(False)
             self.set_automatic_mode(True)
             self.set_trajectory_running(True)
             self._idle_circle_center = None
@@ -877,6 +911,7 @@ class DPControllerLocalPlanner(object):
             self._traj_interpolator.set_start_time((t.to_sec() if not request.start_now else rospy.get_time()))
             self._update_trajectory_info()
             self.set_station_keeping(False)
+            self.set_stall_vehicle(False)
             self.set_automatic_mode(True)
             self.set_trajectory_running(True)
             self._idle_circle_center = None
@@ -939,6 +974,7 @@ class DPControllerLocalPlanner(object):
         self._traj_interpolator.set_start_time(t)
         self._update_trajectory_info()
         self.set_station_keeping(False)
+        self.set_stall_vehicle(False)
         self.set_automatic_mode(True)
         self.set_trajectory_running(True)
         self._idle_circle_center = None
@@ -1006,6 +1042,7 @@ class DPControllerLocalPlanner(object):
         self._traj_interpolator.set_start_time(rospy.Time.now().to_sec())
         self._update_trajectory_info()
         self.set_station_keeping(False)
+        self.set_stall_vehicle(False)
         self.set_automatic_mode(True)
         self.set_trajectory_running(True)
         self._idle_circle_center = None
@@ -1066,6 +1103,7 @@ class DPControllerLocalPlanner(object):
         """
 
         self._lock.acquire()
+        
         if not self._station_keeping_on and self._traj_running:
             if self._smooth_approach_on:
                 # Generate extra waypoint before the initial waypoint
@@ -1109,13 +1147,14 @@ class DPControllerLocalPlanner(object):
                 self._this_ref_pnt = self._calc_teleop_reference()
             else:
                 self._this_ref_pnt = deepcopy(self._vehicle_pose)
+                self._station_keeping_ref = deepcopy(self._vehicle_pose)
             # Set roll and pitch reference to zero
             yaw = self._this_ref_pnt.rot[2]
             self._this_ref_pnt.rot = [0, 0, yaw]
             self.set_automatic_mode(False)
         elif self._station_keeping_on:
-            if self._is_teleop_active:
-                self._this_ref_pnt = self._calc_teleop_reference()
+            # if self._is_teleop_active:
+            #     self._this_ref_pnt = self._calc_teleop_reference()
             self._max_time_pub.publish(Float64(0))
             #######################################################################
             if not self._thrusters_only and not self._is_teleop_active and rospy.get_time() - self._start_count_idle > self._timeout_idle_mode:
@@ -1140,5 +1179,7 @@ class DPControllerLocalPlanner(object):
                 self.set_trajectory_running(True)
                 self._smooth_approach_on = False
             #######################################################################
+        elif self._stall_vehicle_on:
+            self._this_ref_pnt = deepcopy(self._vehicle_pose)
         self._lock.release()
         return self._this_ref_pnt
