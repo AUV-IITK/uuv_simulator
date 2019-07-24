@@ -2,6 +2,30 @@
 Changelog for package uuv_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.8 (2019-02-14)
+------------------
+* Fix bug where thruster axis is determined incorrectly if it rotates about the negative axis
+  Signed-off-by: Jordan Lack <jlack1987@gmail.com>
+* Contributors: Jordan Lack
+
+0.6.7 (2019-02-13)
+------------------
+
+0.6.6 (2019-02-12)
+------------------
+
+0.6.5 (2019-02-07)
+------------------
+* Fix gazebo_dev dependency
+  Signed-off-by: Musa Morena Marcusso Manhães <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhães
+
+0.6.4 (2019-02-03)
+------------------
+* FIX Dependency errors for ROS Buildfarm
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhães
+
 0.6.3 (2018-12-13)
 ------------------
 * FIX Access to joint axis and pose for Gazebo 9 API

@@ -23,19 +23,19 @@
   -->
 
   <!--Thruster manager configuration  -->
-  <arg name="thruster_manager_output_dir" default="$(find uuv_thruster_manager)/config/$(arg model_name)"/>
-  <arg name="thruster_manager_config_file" default="$(find uuv_thruster_manager)/config/$(arg model_name)/thruster_manager.yaml"/>
+  <!--arg name="thruster_manager_output_dir" default="$(find uuv_thruster_manager)/config/$(arg model_name)"/>
+  <arg name="thruster_manager_config_file" default="$(find uuv_thruster_manager)/config/$(arg model_name)/thruster_manager.yaml"/-->
   <!-- File containing the thruster allocation matrix -->
-  <arg name="tam_file" default="$(find uuv_thruster_manager)/config/$(arg model_name)/TAM.yaml"/>
+  <!--arg name="tam_file" default="$(find uuv_thruster_manager)/config/$(arg model_name)/TAM.yaml"/-->
 
   <!-- Start the thruster allocation manager -->
-  <include file="$(find uuv_thruster_manager)/launch/thruster_manager.launch">
+  <!--include file="$(find uuv_thruster_manager)/launch/thruster_manager.launch">
      <arg name="uuv_name" value="$(arg uuv_name)" />
      <arg name="model_name" value="$(arg model_name)" />
      <arg name="output_dir" value="$(arg thruster_manager_output_dir)" />
      <arg name="config_file" value="$(arg thruster_manager_config_file)" />
      <arg name="tam_file" value="$(arg tam_file)" />
-  </include>
+  </include-->
 
   <group ns="$(arg uuv_name)">
     <rosparam file="$(find uuv_control_cascaded_pid)/config/$(arg model_name)/inertial.yaml" command="load"/>

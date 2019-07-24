@@ -270,7 +270,7 @@ class DPControllerLocalPlanner(object):
             inertial_frame_id=self.inertial_frame_id)
         for i in range(waypoint_set.num_waypoints):
             wp = waypoint_set.get_waypoint(i)
-            if wp.z > 0 and self.inertial_frame_id == 'world':
+            if wp.z > 0 and self.inertial_frame_id == 'odom':
                 continue
             if wp.z < 0 and self.inertial_frame_id == 'world_ned':
                 continue
