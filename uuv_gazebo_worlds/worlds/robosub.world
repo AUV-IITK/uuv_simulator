@@ -136,11 +136,11 @@
             <static>true</static>
         </include>
 
-        <include>
+        <!-- <include>
             <uri>model://Buoy_Akash</uri>
             <pose>27.656416 -21.449871 -4.360870 -3.110457 -0.011932 0.806675</pose>
             <static>true</static>
-        </include>
+        </include> -->
 
         <plugin name="underwater_current_plugin" filename="libuuv_underwater_current_ros_plugin.so">
             <namespace>hydrodynamics</namespace>
